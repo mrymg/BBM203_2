@@ -49,21 +49,28 @@ typedef struct node {
     struct node* next;
 
 } passenger;
-passenger*  newNode(char* name, priority priority, class c , char* flight){
+passenger*  newNode(char* name, priority priority, class c , char* flight, FILE* out, int b, int e, int s ){
     passenger* temp = (passenger*)malloc(sizeof(passenger));
     temp->name = name;
     temp->c = c;
     temp->p = priority;
     temp->next =NULL;
     temp->wanted = flight;
+    char* cl;
+    int count = 0;
+    if(c== business){cl = "business"; count = b;}
+    else if(c==economy){cl = "economy"; count= e;}
+    else { cl="standard"; count =s;}
+
+    fprintf(out, "queue %s %s %s %d\n", flight,name, cl, count );
     return temp;
 }
-void pushque(passenger** head, char* name, priority p, class c, char *f)
+void pushque(passenger** head, char* name, priority p, class c, char *f, FILE* out, int b, int e, int s )
 {
 
     passenger* start = (*head);
 
-    passenger* temp = newNode(name, p, c, f);
+    passenger* temp = newNode(name, p, c, f,out,b,e,s);
 
     if(c == business){
 
@@ -300,7 +307,9 @@ int main(int argc, char *argv[]) {
     stack* eStack =NULL;
     stack* sStack =NULL;
     char *ch, *name, *class;
-
+    int countB = 0;
+    int countE = 0;
+    int countS = 0;
     passenger* pq =NULL;
     for ( k = 0; k <lineNum; k++) {
 
@@ -394,18 +403,24 @@ int main(int argc, char *argv[]) {
                 else if(strcmp(prio,"diplomat")==0)
                     prior = diplomat;
             }
+            if(class == business)
+                countB++;
+            else if(class == economy)
+                countE++;
+            else if(class == standard)
+                countS++;
+
             if(pq == NULL ){
 
-                pq= newNode(pName, prior, class, flight);
+                pq= newNode(pName, prior, class, flight, out,countB,countE,countS);
             }else{
 
-                pushque(&pq, pName, prior, class, flight);
+                pushque(&pq, pName, prior, class, flight, out,countB,countE,countS);
 
             }
-
-
-
-
+        }
+        if(strcmp(ch, "sell") == 0){
+            
         }
 
 
